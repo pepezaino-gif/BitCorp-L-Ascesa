@@ -11,6 +11,7 @@
             --card-bg: #131c2e;
             --accent-cyan: #00f2fe;
             --accent-pink: #ff007f;
+            --accent-purple: #bd00ff;
             --text-main: #e2e8f0;
             --text-dim: #94a3b8;
             --border-color: #1e293b;
@@ -60,7 +61,7 @@
 
         .tabs {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             justify-content: space-between;
         }
 
@@ -70,9 +71,9 @@
             color: var(--text-dim);
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            padding: 10px 4px;
+            padding: 8px 2px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
@@ -117,6 +118,7 @@
             text-align: center;
             box-shadow: 0 4px 12px rgba(255, 0, 127, 0.2);
             transition: transform 0.05s ease, background 0.2s;
+            width: 100%;
         }
 
         #big-clicker:active {
@@ -162,6 +164,7 @@
             font-size: 0.8rem;
             cursor: not-allowed;
             text-align: center;
+            white-space: nowrap;
         }
 
         .buy-btn.can-afford {
@@ -175,6 +178,32 @@
         .buy-btn.can-afford:hover {
             background: var(--accent-cyan);
             color: #0b0f19;
+        }
+
+        .quantum-btn {
+            background: #1e293b;
+            color: var(--text-dim);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.8rem;
+            cursor: not-allowed;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .quantum-btn.can-afford {
+            background: rgba(189, 0, 255, 0.15);
+            color: var(--accent-purple);
+            border-color: var(--accent-purple);
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(189, 0, 255, 0.2);
+        }
+
+        .quantum-btn.can-afford:hover {
+            background: var(--accent-purple);
+            color: #fff;
         }
 
         .click-text {
@@ -206,42 +235,53 @@
             <div style="font-size: 0.75rem; letter-spacing: 2px; color: var(--text-dim);">CREDITI DISPONIBILI</div>
             <div id="main-counter">0</div>
             <div id="per-second">Crediti al secondo: 0</div>
+            <div style="font-size: 0.8rem; color: var(--accent-purple); margin-top: 6px;">Frammenti Quantici: <span id="quantum-fragments-count">0 FT</span></div>
         </div>
 
-        <!-- Menu Tab (Ordine rigoroso: generators [0], missions [1], prestige [2], stats [3]) -->
+        <!-- Menu Tab (5 tab ora) -->
         <div class="tabs">
             <button class="tab-btn active" onclick="openTab('generators')">Impianti</button>
             <button class="tab-btn" onclick="openTab('missions')">Missioni</button>
-            <button class="tab-btn" onclick="openTab('prestige')">Ascensione</button>
+            <button class="tab-btn" onclick="openTab('quantumShop')">Negozio Q.</button>
+            <button class="tab-btn" onclick="openTab('prestige')">Ascesa</button>
             <button class="tab-btn" onclick="openTab('stats')">Log</button>
         </div>
 
-        <!-- Tab 0: Impianti -->
+        <!-- Tab 0: Impianti & Clic -->
         <div id="generators" class="tab-content active">
             <div class="section-title">Attività Manuale</div>
             <button id="big-clicker">DECRYPTA DATI</button>
             
-            <div class="section-title" style="margin-top: 10px;">Infrastruttura di Rete</div>
+            <div class="section-title" style="margin-top: 5px;">Potenziamenti Clic</div>
+            <div id="click-upgrades-list"></div>
+
+            <div class="section-title" style="margin-top: 5px;">Infrastruttura di Rete</div>
             <div id="generators-list"></div>
         </div>
 
         <!-- Tab 1: Missioni -->
         <div id="missions" class="tab-content">
-            <div class="section-title">Contratti di Hacking</div>
+            <div class="section-title">Contratti di Hacking (10 Livelli)</div>
             <div id="missions-list"></div>
         </div>
 
-        <!-- Tab 2: Ascensione -->
+        <!-- Tab 2: Negozio Quantico (Novità: spuovi i frammenti qui!) -->
+        <div id="quantumShop" class="tab-content">
+            <div class="section-title">Negozio Tecnologie Quantiche</div>
+            <div class="gen-stats" style="margin-bottom: 5px;">Usa i Frammenti Quantici ottenuti con l'Ascensione per comprare potenziamenti permanenti che non si azzerano mai!</div>
+            <div id="quantum-shop-list"></div>
+        </div>
+
+        <!-- Tab 3: Ascensione -->
         <div id="prestige" class="tab-content">
             <div class="section-title">Protocollo di Ascensione</div>
             <div class="gen-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
-                <div style="width: 100%; display: flex; justify-content: space-between;"><span>Moltiplicatore Frammenti:</span> <span id="prestige-mult" style="color:var(--accent-cyan);">x1.00</span></div>
-                <div style="width: 100%; display: flex; justify-content: space-between;"><span>Frammenti Disponibili:</span> <span id="prestige-pending" style="color:var(--accent-cyan);">0 FT</span></div>
+                <div style="width: 100%; display: flex; justify-content: space-between;"><span>Frammenti Disponibili da Riscuotere:</span> <span id="prestige-pending" style="color:var(--accent-purple);">0 FT</span></div>
                 <button id="prestige-btn" class="buy-btn" style="width: 100%; margin-top: 5px;" disabled>ATTIVA PROTOCOLLO DI ASCENSIONE</button>
             </div>
         </div>
 
-        <!-- Tab 3: Log e Statistiche -->
+        <!-- Tab 4: Log e Statistiche -->
         <div id="stats" class="tab-content">
             <div class="section-title">Statistiche di Sistema</div>
             <div class="gen-item"><span>Totale Clic Eseguiti:</span> <span id="total-clicks" style="color:var(--accent-cyan);">0</span></div>
