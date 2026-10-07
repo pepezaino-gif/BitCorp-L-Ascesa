@@ -7,6 +7,7 @@ const gameData = {
     prestigePoints: 0,
     prestigeMult: 1,
     totalAscensions: 0,
+    clickPowerLevel: 1,
     generators: [
         { id: 'script', name: 'Python Script', level: 0, baseCost: 10, baseProd: 1 },
         { id: 'bot', name: 'Mining Botnet', level: 0, baseCost: 100, baseProd: 8 },
@@ -19,8 +20,8 @@ const gameData = {
     achievements: [
         { id: 'c1', name: 'Novizio Digitale', desc: 'Fai 100 Clic', check: (g) => g.totalClicks >= 100, unlocked: false },
         { id: 'g1', name: 'Script Kiddie', desc: 'Python Script Lv 10', check: (g) => g.generators[0].level >= 10, unlocked: false },
-        { id: 'p1', name: 'Rinascita', desc: 'Esegui la prima Ascensione', check: (g) => g.totalAscensions >= 1, unlocked: false },
-        { id: 'rich1', name: 'Milionario', desc: 'Possiedi 1 Milione di Crediti', check: (g) => g.credits >= 1e6, unlocked: false }
+        { id: 'p1', name: 'Rinascita Quantica', desc: 'Esegui la prima Ascensione', check: (g) => g.totalAscensions >= 1, unlocked: false },
+        { id: 'rich1', name: 'Cyber Milionario', desc: 'Possiedi 1 Milione di Crediti', check: (g) => g.credits >= 1e6, unlocked: false }
     ],
     adBoostActive: false,
     adBoostEnds: 0
@@ -40,19 +41,19 @@ const uiPlayTime = document.getElementById('play-time');
 const uiWatchAdBtn = document.getElementById('watch-ad-btn');
 
 function loadGame() {
-    const saved = localStorage.getItem('cyberTycoonSave_v2');
+    const saved = localStorage.getItem('cyberTycoonSave_v3');
     if (saved) {
         try {
             const parsed = JSON.parse(saved);
             Object.assign(gameData, parsed);
             gameData.startTime = Date.now() - (gameData.secondsPlayed * 1000);
-        } catch(e) { console.log("Errore caricamento"); }
+        } catch(e) { console.log("Errore caricamento salvataggio"); }
     }
     updateUI_Full();
 }
 
 function saveGame() {
-    localStorage.setItem('cyberTycoonSave_v2', JSON.stringify(gameData));
+    localStorage.setItem('cyberTycoonSave_v3', JSON.stringify(gameData));
 }
 
 function formatNum(num) {
@@ -70,9 +71,9 @@ function getGeneratorCost(gen, amount = 1) {
     }
     let totalCost = 0;
     let currentLevel = gen.level;
-    let numToBuy = 1;
+    let numToBuy = 0;
     let tempCredits = gameData.credits;
-    while (tempCredits > 0) {
+    while (tempCredits > 0 && numToBuy < 500) {
         let cost = Math.floor(gen.baseCost * Math.pow(1.15, currentLevel));
         if (tempCredits >= cost) {
             tempCredits -= cost;
@@ -80,9 +81,8 @@ function getGeneratorCost(gen, amount = 1) {
             currentLevel++;
             numToBuy++;
         } else { break; }
-        if (numToBuy > 500) break;
     }
-    return totalCost;
+    return totalCost > 0 ? totalCost : Math.floor(gen.baseCost * Math.pow(1.15, gen.level));
 }
 
 function getGeneratorProd(gen) {
@@ -92,6 +92,11 @@ function getGeneratorProd(gen) {
         prod *= Math.pow(4, mults25);
     }
     return prod;
+}
+
+function calculateClickPower() {
+    let base = gameData.clickPowerLevel * (1 + (gameData.generators[0].level * 0.2));
+    return base * gameData.prestigeMult;
 }
 
 function calculatePPS() {
@@ -107,6 +112,24 @@ function calculatePPS() {
 function renderGenerators() {
     genList.innerHTML = '';
     const currentPPS = calculatePPS();
+
+    // Aggiungiamo un box per potenziare il click manuale dentro la lista impianti
+    const clickUpgradeCost = Math.floor(50 * Math.pow(1.5, gameData.clickPowerLevel - 1));
+    const clickDiv = document.createElement('div');
+    clickDiv.className = 'gen-item';
+    clickDiv.style.borderColor = 'var(--accent-2)';
+    clickDiv.innerHTML = `
+        <div class="gen-info">
+            <div class="gen-title" style="color:var(--accent-2);">Firewall & Exploit (Lv ${gameData.clickPowerLevel})</div>
+            <div class="gen-stats">Potenza Clic: +${formatNum(calculateClickPower())} crediti</div>
+        </div>
+        <div class="gen-btn-group">
+            <button class="buy-btn ${gameData.credits >= clickUpgradeCost ? 'can-afford' : ''}" onclick="buyClickUpgrade()">
+                UPGRADE<br>${formatNum(clickUpgradeCost)}
+            </button>
+        </div>
+    `;
+    genList.appendChild(clickDiv);
 
     gameData.generators.forEach((gen, index) => {
         const cost = getGeneratorCost(gen, 1);
@@ -134,6 +157,16 @@ function renderGenerators() {
     });
 }
 
+function buyClickUpgrade() {
+    const cost = Math.floor(50 * Math.pow(1.5, gameData.clickPowerLevel - 1));
+    if (gameData.credits >= cost) {
+        gameData.credits -= cost;
+        gameData.clickPowerLevel++;
+        saveGame();
+        updateUI_Full();
+    }
+}
+
 function buyGenerator(index) {
     const gen = gameData.generators[index];
     const cost = getGeneratorCost(gen, 1);
@@ -157,7 +190,7 @@ function buyGeneratorMax(index) {
         } else {
             break;
         }
-        if (levelsBought > 500) break;
+        if (levelsBought > 200) break;
     }
     if (levelsBought > 0) {
         gameData.credits -= totalCost;
@@ -168,8 +201,7 @@ function buyGeneratorMax(index) {
 }
 
 bigClicker.addEventListener('click', (e) => {
-    const pps = calculatePPS();
-    const clickVal = Math.max(1, pps);
+    const clickVal = calculateClickPower();
     gameData.credits += clickVal;
     gameData.totalClicks++;
 
@@ -185,11 +217,12 @@ bigClicker.addEventListener('click', (e) => {
     saveGame();
 });
 
+// CALCOLO ASCENSIONE CORRETTO E ACCESSIBILE
 function calculatePendingPrestige() {
     let totalLevel = 0;
     gameData.generators.forEach(g => totalLevel += g.level);
-    if (totalLevel < 50) return 0;
-    return Math.floor(Math.sqrt(totalLevel * 500) / 10);
+    if (totalLevel < 15) return 0; // Abbassato a 15 livelli totali per renderla sbloccabile prima
+    return Math.floor(Math.sqrt((totalLevel - 10) * 200));
 }
 
 function updatePrestigeUI() {
@@ -203,12 +236,13 @@ function updatePrestigeUI() {
 uiPrestigeBtn.addEventListener('click', () => {
     const pending = calculatePendingPrestige();
     if (pending < 1) return;
-    if(!confirm("Resettare progressi per guadagnare Naniti Quantici?")) return;
+    if(!confirm("⚠️ ATTENZIONE: Vuoi avviare il Protocollo di Ascensione? Perderai i crediti e i livelli degli impianti, ma guadagnerai Naniti Quantici permanenti!")) return;
 
     gameData.credits = 0;
     gameData.prestigePoints += pending;
-    gameData.prestigeMult = 1 + (gameData.prestigePoints * 0.1);
+    gameData.prestigeMult = 1 + (gameData.prestigePoints * 0.15); // +15% per ogni punto nanite
     gameData.totalAscensions++;
+    gameData.clickPowerLevel = 1;
     gameData.generators.forEach(gen => gen.level = 0);
 
     saveGame();
@@ -238,10 +272,10 @@ function checkAchievements() {
 }
 
 uiWatchAdBtn.addEventListener('click', () => {
-    if (confirm("Simulazione annuncio: Vuoi raddoppiare la produzione per 5 minuti?")) {
+    if (confirm("Attivare Overclock della Rete? Raddoppierà la produzione per 5 minuti!")) {
         gameData.adBoostActive = true;
         gameData.adBoostEnds = Date.now() + (5 * 60 * 1000);
-        uiWatchAdBtn.innerText = "BOOST ATTIVO";
+        uiWatchAdBtn.innerText = "OVERCLOCK ATTIVO";
         uiWatchAdBtn.disabled = true;
         
         const timer = setInterval(() => {
@@ -252,7 +286,7 @@ uiWatchAdBtn.addEventListener('click', () => {
                 uiWatchAdBtn.disabled = false;
                 clearInterval(timer);
             } else {
-                uiWatchAdBtn.innerText = `Boost: ${Math.floor(rem/60)}:${(rem%60 < 10 ? '0':'')}${rem%60}`;
+                uiWatchAdBtn.innerText = `Overclock: ${Math.floor(rem/60)}:${(rem%60 < 10 ? '0':'')}${rem%60}`;
             }
         }, 1000);
         updateUI_Full();
@@ -265,7 +299,7 @@ function updateUI_Credits() {
     
     gameData.generators.forEach((gen, i) => {
         const cost = getGeneratorCost(gen, 1);
-        const btn = document.querySelectorAll('.buy-btn')[i * 2];
+        const btn = document.querySelectorAll('.buy-btn')[i * 2 + 1]; // +1 per saltare il tasto click upgrade
         if (btn) {
             if (gameData.credits >= cost) btn.classList.add('can-afford');
             else btn.classList.remove('can-afford');
@@ -291,6 +325,7 @@ function openTab(tabName) {
     if (tabName === 'stats') document.querySelectorAll('.tab-btn')[2].classList.add('active');
 }
 
+// Ciclo di gioco principale (ogni 100ms)
 setInterval(() => {
     const now = Date.now();
     const delta = (now - gameData.lastUpdate) / 1000;
@@ -311,4 +346,4 @@ setInterval(() => {
 }, 100);
 
 loadGame();
-  
+    
