@@ -3,39 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CYBER TERMINAL // EXPLOIT</title>
+    <title>BitCorp: L'Ascesa</title>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #050805;
-            --matrix-green: #00ff66;
-            --matrix-dim: #003311;
-            --matrix-glow: rgba(0, 255, 102, 0.4);
-            --border-green: #00aa44;
+            --bg-color: #0b0f19;
+            --card-bg: #131c2e;
+            --accent-cyan: #00f2fe;
+            --accent-pink: #ff007f;
+            --text-main: #e2e8f0;
+            --text-dim: #94a3b8;
+            --border-color: #1e293b;
         }
 
         body {
             background-color: var(--bg-color);
-            color: var(--matrix-green);
+            color: var(--text-main);
             font-family: 'Share Tech Mono', monospace;
             margin: 0;
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             overflow-x: hidden;
-        }
-
-        /* Effetto scanlines stile monitor CRT */
-        body::after {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
-            z-index: 99999;
-            background-size: 100% 4px, 6px 100%;
-            pointer-events: none;
         }
 
         .container {
@@ -46,51 +36,52 @@
             gap: 12px;
         }
 
-        /* Contatore Principale Dinamico */
         .header-box {
-            border: 1px dashed var(--matrix-green);
-            padding: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
             text-align: center;
-            background: rgba(0, 20, 5, 0.8);
-            box-shadow: 0 0 10px var(--matrix-glow);
-            animation: pulseGlow 2s infinite alternate;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
         }
 
         #main-counter {
             font-size: 2.5rem;
             font-weight: bold;
-            text-shadow: 0 0 8px var(--matrix-green);
+            color: var(--accent-cyan);
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
         }
 
         #per-second {
             font-size: 0.9rem;
-            color: #88ffaa;
+            color: var(--text-dim);
+            margin-top: 4px;
         }
 
-        /* Menu a Tab dinamico */
         .tabs {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             justify-content: space-between;
         }
 
         .tab-btn {
             flex: 1;
-            background: var(--bg-color);
-            color: var(--matrix-green);
-            border: 1px solid var(--border-green);
-            padding: 8px 4px;
+            background: var(--card-bg);
+            color: var(--text-dim);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px 4px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             transition: all 0.2s ease;
+            text-align: center;
         }
 
         .tab-btn.active, .tab-btn:hover {
-            background: var(--matrix-green);
-            color: var(--bg-color);
-            box-shadow: 0 0 8px var(--matrix-green);
-            font-weight: bold;
+            background: rgba(0, 242, 254, 0.1);
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
         }
 
         .tab-content {
@@ -104,42 +95,45 @@
         }
 
         .section-title {
-            font-size: 1.1rem;
-            border-bottom: 1px solid var(--border-green);
-            padding-bottom: 4px;
+            font-size: 1rem;
+            color: var(--text-dim);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 6px;
             margin-top: 5px;
             letter-spacing: 1px;
+            text-transform: uppercase;
         }
 
-        /* Bottone Centrale Hacking (Clicker) */
         #big-clicker {
-            background: var(--matrix-dim);
-            border: 2px solid var(--matrix-green);
-            color: var(--matrix-green);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid var(--accent-pink);
+            color: var(--text-main);
             padding: 20px;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
             cursor: pointer;
             text-align: center;
-            box-shadow: inset 0 0 10px var(--matrix-glow);
+            box-shadow: 0 4px 12px rgba(255, 0, 127, 0.2);
             transition: transform 0.05s ease, background 0.2s;
         }
 
         #big-clicker:active {
-            transform: scale(0.97);
-            background: var(--matrix-green);
-            color: var(--bg-color);
+            transform: scale(0.98);
+            background: var(--accent-pink);
+            color: #000;
         }
 
-        /* Oggetti / Impianti / Missioni */
         .gen-item, .ach-item {
-            border: 1px solid var(--border-green);
-            background: rgba(0, 10, 3, 0.6);
-            padding: 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
         }
 
         .gen-info {
@@ -149,18 +143,21 @@
         .gen-title {
             font-size: 0.95rem;
             font-weight: bold;
+            color: var(--text-main);
         }
 
         .gen-stats {
             font-size: 0.8rem;
-            color: #88ffaa;
+            color: var(--text-dim);
+            margin-top: 2px;
         }
 
         .buy-btn {
-            background: #111;
-            color: #555;
-            border: 1px solid #444;
-            padding: 6px 10px;
+            background: #1e293b;
+            color: var(--text-dim);
+            border: 1px solid #334155;
+            border-radius: 6px;
+            padding: 8px 12px;
             font-family: 'Share Tech Mono', monospace;
             font-size: 0.8rem;
             cursor: not-allowed;
@@ -168,27 +165,25 @@
         }
 
         .buy-btn.can-afford {
-            background: var(--matrix-dim);
-            color: var(--matrix-green);
-            border-color: var(--matrix-green);
+            background: rgba(0, 242, 254, 0.15);
+            color: var(--accent-cyan);
+            border-color: var(--accent-cyan);
             cursor: pointer;
-            box-shadow: 0 0 5px var(--matrix-glow);
-            animation: buttonFlash 1s infinite alternate;
+            box-shadow: 0 0 8px rgba(0, 242, 254, 0.2);
         }
 
         .buy-btn.can-afford:hover {
-            background: var(--matrix-green);
-            color: var(--bg-color);
+            background: var(--accent-cyan);
+            color: #0b0f19;
         }
 
-        /* Effetti fluttuanti dei clic */
         .click-text {
             position: absolute;
-            color: #fff;
+            color: var(--accent-cyan);
             font-weight: bold;
             font-size: 1.1rem;
             pointer-events: none;
-            text-shadow: 0 0 5px var(--matrix-green);
+            text-shadow: 0 0 5px rgba(0, 242, 254, 0.5);
             animation: floatUp 0.8s ease-out forwards;
         }
 
@@ -197,73 +192,66 @@
             100% { transform: translateY(-40px); opacity: 0; }
         }
 
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 5px rgba(0,255,102,0.2); }
-            100% { box-shadow: 0 0 15px rgba(0,255,102,0.6); }
-        }
-
-        @keyframes buttonFlash {
-            0% { border-color: var(--border-green); }
-            100% { border-color: #fff; }
+        .unlocked {
+            border-color: var(--accent-cyan);
+            background: rgba(0, 242, 254, 0.05);
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Header con Crediti -->
+        <!-- Header Crediti -->
         <div class="header-box">
-            <div style="font-size: 0.8rem; letter-spacing: 2px;">[CREDITI_ESTRATTI]</div>
+            <div style="font-size: 0.75rem; letter-spacing: 2px; color: var(--text-dim);">CREDITI DISPONIBILI</div>
             <div id="main-counter">0</div>
-            <div id="per-second">Flusso: 0/s</div>
+            <div id="per-second">Crediti al secondo: 0</div>
         </div>
 
-        <!-- Menu di Navigazione Tab -->
+        <!-- Menu Tab (Ordine rigoroso: generators [0], missions [1], prestige [2], stats [3]) -->
         <div class="tabs">
-            <button class="tab-btn active" onclick="openTab('generators')">Terminal</button>
+            <button class="tab-btn active" onclick="openTab('generators')">Impianti</button>
             <button class="tab-btn" onclick="openTab('missions')">Missioni</button>
             <button class="tab-btn" onclick="openTab('prestige')">Ascensione</button>
             <button class="tab-btn" onclick="openTab('stats')">Log</button>
         </div>
 
-        <!-- TAB 1: IMPIANTI E CLICKER -->
+        <!-- Tab 0: Impianti -->
         <div id="generators" class="tab-content active">
-            <div class="section-title">> ATTIVITÀ MANUALE</div>
-            <button id="big-clicker">DECRYPT DATA [ESEGUI]</button>
+            <div class="section-title">Attività Manuale</div>
+            <button id="big-clicker">DECRYPTA DATI</button>
             
-            <div class="section-title" style="margin-top: 10px;">> ARCHITETTURA DI RETE</div>
+            <div class="section-title" style="margin-top: 10px;">Infrastruttura di Rete</div>
             <div id="generators-list"></div>
         </div>
 
-        <!-- TAB 2: MISSIONI (File missions.js) -->
+        <!-- Tab 1: Missioni -->
         <div id="missions" class="tab-content">
-            <div class="section-title">> CONTRATTI DI HACKING</div>
+            <div class="section-title">Contratti di Hacking</div>
             <div id="missions-list"></div>
         </div>
 
-        <!-- TAB 3: ASCENSIONE / PRESTIGE -->
+        <!-- Tab 2: Ascensione -->
         <div id="prestige" class="tab-content">
-            <div class="section-title">> PROTOCOLLO DI RESET</div>
-            <div class="gen-item" style="flex-direction: column; align-items: flex-start; gap: 5px;">
-                <div>Moltiplicatore Naniti: <span id="prestige-mult" style="color:#fff;">x1.00</span></div>
-                <div>Naniti Disponibili: <span id="prestige-pending" style="color:#fff;">0 NT</span></div>
-                <button id="prestige-btn" class="buy-btn" style="width: 100%; margin-top: 5px;" disabled>AVVIA PROTOCOLLO</button>
+            <div class="section-title">Protocollo di Ascensione</div>
+            <div class="gen-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
+                <div style="width: 100%; display: flex; justify-content: space-between;"><span>Moltiplicatore Frammenti:</span> <span id="prestige-mult" style="color:var(--accent-cyan);">x1.00</span></div>
+                <div style="width: 100%; display: flex; justify-content: space-between;"><span>Frammenti Disponibili:</span> <span id="prestige-pending" style="color:var(--accent-cyan);">0 FT</span></div>
+                <button id="prestige-btn" class="buy-btn" style="width: 100%; margin-top: 5px;" disabled>ATTIVA PROTOCOLLO DI ASCENSIONE</button>
             </div>
-            <div class="section-title" style="margin-top: 10px;">> EXTRA OVERCLOCK</div>
-            <button id="watch-ad-btn" class="buy-btn can-afford" style="width: 100%; padding: 12px;">ATTIVA OVERCLOCK x2 (5m)</button>
         </div>
 
-        <!-- TAB 4: STATISTICHE / LOG -->
+        <!-- Tab 3: Log e Statistiche -->
         <div id="stats" class="tab-content">
-            <div class="section-title">> LOG DI SISTEMA</div>
-            <div class="gen-item"><span>Totale Clic Eseguiti:</span> <span id="total-clicks" style="color:#fff;">0</span></div>
-            <div class="gen-item"><span>Tempo di Sessione:</span> <span id="play-time" style="color:#fff;">0s</span></div>
-            <div class="section-title" style="margin-top: 10px;">> ARCHIVIO SUCCESSI</div>
+            <div class="section-title">Statistiche di Sistema</div>
+            <div class="gen-item"><span>Totale Clic Eseguiti:</span> <span id="total-clicks" style="color:var(--accent-cyan);">0</span></div>
+            <div class="gen-item"><span>Tempo di Sessione:</span> <span id="play-time" style="color:var(--accent-cyan);">0s</span></div>
+            <div class="section-title" style="margin-top: 10px;">Archivio Successi</div>
             <div id="achievements-list"></div>
         </div>
     </div>
 
-    <!-- Script di Gioco -->
+    <!-- Script Collegati -->
     <script src="game.js"></script>
     <script src="missions.js"></script>
 </body>
