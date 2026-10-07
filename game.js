@@ -114,6 +114,8 @@ function renderGenerators() {
     const currentPPS = calculatePPS();
 
     const clickUpgradeCost = Math.floor(50 * Math.pow(1.5, gameData.clickPowerLevel - 1));
+    const clickCanAfford = gameData.credits >= clickUpgradeCost;
+    
     const clickDiv = document.createElement('div');
     clickDiv.className = 'gen-item';
     clickDiv.style.borderColor = 'var(--accent-2)';
@@ -123,7 +125,7 @@ function renderGenerators() {
             <div class="gen-stats">Potenza Clic: +${formatNum(calculateClickPower())} crediti</div>
         </div>
         <div class="gen-btn-group">
-            <button class="buy-btn ${gameData.credits >= clickUpgradeCost ? 'can-afford' : ''}" onclick="buyClickUpgrade()">
+            <button class="buy-btn ${clickCanAfford ? 'can-afford' : ''}" onclick="buyClickUpgrade()">
                 UPGRADE<br>${formatNum(clickUpgradeCost)}
             </button>
         </div>
@@ -219,11 +221,13 @@ bigClicker.addEventListener('click', (e) => {
 function calculatePendingPrestige() {
     let totalLevel = 0;
     gameData.generators.forEach(g => totalLevel += g.level);
-    if (totalLevel < 10) return 0;
-    let fromLevels = Math.floor((totalLevel - 9) * 0.5);
-    let fromCredits = Math.floor(gameData.credits / 10000);
+    
+    if (totalLevel < 5 && gameData.credits < 1000) return 0;
+    
+    let fromLevels = Math.floor(totalLevel * 0.2);
+    let fromCredits = Math.floor(gameData.credits / 5000);
     let totalPending = fromLevels + fromCredits;
-    return totalPending > 0 ? totalPending : 0;
+    return totalPending > 0 ? totalPending : (totalLevel >= 5 ? 1 : 0);
 }
 
 function updatePrestigeUI() {
@@ -309,12 +313,23 @@ function updateUI_Credits() {
     uiCounter.innerText = formatNum(gameData.credits);
     uiPerSecond.innerText = 'Crediti al secondo: ' + formatNum(calculatePPS());
     
+    // Aggiornamento efficiente delle classi CSS dei bottoni senza ridisegnare tutto il DOM
+    const clickUpgradeCost = Math.floor(50 * Math.pow(1.5, gameData.clickPowerLevel - 1));
+    const clickBtn = document.querySelector('.gen-item .buy-btn');
+    if (clickBtn) {
+        if (gameData.credits >= clickUpgradeCost) clickBtn.classList.add('can-afford');
+        else clickBtn.classList.remove('can-afford');
+    }
+
     gameData.generators.forEach((gen, i) => {
         const cost = getGeneratorCost(gen, 1);
-        const btn = document.querySelectorAll('.buy-btn')[i * 2 + 1];
-        if (btn) {
-            if (gameData.credits >= cost) btn.classList.add('can-afford');
-            else btn.classList.remove('can-afford');
+        const genItems = document.querySelectorAll('.gen-item');
+        if (genItems[i + 1]) { // +1 perché il primo è il click upgrade
+            const btn = genItems[i + 1].querySelector('.buy-btn');
+            if (btn) {
+                if (gameData.credits >= cost) btn.classList.add('can-afford');
+                else btn.classList.remove('can-afford');
+            }
         }
     });
 }
@@ -332,11 +347,14 @@ function openTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById(tabName).classList.add('active');
-    if (tabName === 'generators') document.querySelectorAll('.tab-btn')[0].classList.add('active');
-    if (tabName === 'prestige') document.querySelectorAll('.tab-btn')[1].classList.add('active');
-    if (tabName === 'stats') document.querySelectorAll('.tab-btn')[2].classList.add('active');
+    
+    // Attiva il pulsante tab corrispondente in modo sicuro
+    if (tabName === 'generators') document.querySelectorAll('.tab-btn')[0]?.classList.add('active');
+    if (tabName === 'prestige') document.querySelectorAll('.tab-btn')[1]?.classList.add('active');
+    if (tabName === 'stats') document.querySelectorAll('.tab-btn')[2]?.classList.add('active');
 }
 
+// Loop principale di gioco (eseguito ogni 100ms)
 setInterval(() => {
     const now = Date.now();
     const delta = (now - gameData.lastUpdate) / 1000;
