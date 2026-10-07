@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cyber Tycoon: Ascensione</title>
+    <style>
+        :root {
+            --bg-color: #050509;
+            --text-color: #e0e0e0;
+            --accent: #00f2fe;
+            --accent-2: #ff0055;
+            --panel-bg: #10101a;
+            --border: #333;
+            --success: #00e676;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        /* --- Header & Ads --- */
+        #ad-banner-top { width: 100%; height: 50px; background: #222; display: flex; align-items: center; justify-content: center; color: #888; border-bottom: 1px solid var(--border); font-size: 0.8rem; flex-shrink: 0;}
+        
+        header { text-align: center; padding: 15px; background: var(--panel-bg); border-bottom: 2px solid var(--accent); flex-shrink: 0; }
+        #main-counter { font-size: 2.5rem; font-weight: bold; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+        #per-second { font-size: 1rem; color: #888; margin-top: 5px; }
+
+        /* --- Tabs --- */
+        .tab-controls { display: flex; background: #080810; border-bottom: 1px solid var(--border); flex-shrink: 0;}
+        .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #888; font-size: 1rem; cursor: pointer; border-right: 1px solid var(--border); }
+        .tab-btn:last-child { border-right: none; }
+        .tab-btn.active { background: var(--panel-bg); color: var(--accent); font-weight: bold; border-bottom: 2px solid var(--accent); }
+
+        /* --- Main Sections --- */
+        main { flex-grow: 1; overflow-y: auto; padding: 15px; }
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- Click Area (Visual) --- */
+        #click-farm { background: var(--panel-bg); border: 1px solid var(--accent); border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden;}
+        #click-farm h3 {color: var(--accent-2); text-transform: uppercase; letter-spacing: 2px; font-size: 1.1rem;}
+        #big-clicker { font-size: 1.5rem; padding: 15px 30px; background: linear-gradient(45deg, var(--accent-2), #cc0044); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; position: relative; z-index: 2; transition: transform 0.1s; box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);}
+        #big-clicker:active { transform: scale(0.97); }
+        .click-text { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: floatUp 1s ease-out; z-index: 1; }
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
+
+        /* --- Generators List --- */
+        .gen-item { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .gen-info { flex-grow: 1; }
+        .gen-title { font-weight: bold; font-size: 1.1rem; color: white; }
+        .gen-stats { font-size: 0.9rem; color: #aaa; margin-top: 4px; }
+        .gen-mult {color: var(--success); font-weight: bold; font-size: 0.8rem; margin-left: 5px;}
+        .gen-btn-group { display: flex; flex-direction: column; align-items: flex-end; gap: 5px;}
+        .buy-btn { padding: 8px 15px; background: var(--accent); color: #050509; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 0.9rem; min-width: 100px; }
+        .buy-btn:disabled { background: #444; color: #888; cursor: not-allowed; }
+        .buy-btn.can-afford {background: var(--accent); box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);}
+        .buy-btn:not(.can-afford) {background: #222; color: #666;}
+        .buy-btn-max { font-size: 0.7rem; padding: 4px 8px; background: #333; color: #ddd;}
+
+        /* --- Prestigio & Stats --- */
+        .stat-box { background: #080810; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;}
+        .stat-label { color: #888; font-size: 0.9rem; }
+        .stat-value { color: var(--accent); font-size: 1.5rem; font-weight: bold; margin-top: 5px; }
+        
+        #prestige-section { border: 2px solid var(--accent-2); }
+        #prestige-btn { width: 100%; padding: 15px; background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); color: black; border: none; border-radius: 5px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 10px;}
+        #prestige-btn:disabled { background: #555; color: #999; cursor: not-allowed; }
+        
+        /* --- Achievements --- */
+        .ach-item { background: #080810; border: 1px solid var(--border); padding: 10px; margin-bottom: 8px; border-radius: 4px; opacity: 0.5;}
+        .ach-item.unlocked { border-color: var(--success); opacity: 1; background: rgba(0, 230, 118, 0.1);}
+        .ach-title { font-weight: bold; color: white;}
+        .ach-desc { font-size: 0.8rem; color: #aaa;}
+
+        /* --- Ad Boost --- */
+        #ad-boost-section { background: #1a1a2e; border: 1px solid var(--accent); padding: 15px; text-align: center; margin-top: 20px; border-radius: 8px; }
+        #watch-ad-btn { padding: 10px 20px; background: var(--accent-2); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+
+    </style>
+</head>
+<body>
+
+    <!-- Simulated Ad Banner -->
+    <div id="ad-banner-top">[SPAZIO BANNER PUBBLICITARIO]</div>
+
+    <header>
+        <div id="main-counter">0</div>
+        <div id="per-second">Crediti al secondo: 0</div>
+    </header>
+
+    <div class="tab-controls">
+        <button class="tab-btn active" onclick="openTab('generators')">Impianti</button>
+        <button class="tab-btn" onclick="openTab('prestige')">Ascensione</button>
+        <button class="tab-btn" onclick="openTab('stats')">Info</button>
+    </div>
+
+    <main>
+        <!-- Tab GENERATORS -->
+        <div id="generators" class="tab-content active">
+            
+            <div id="click-farm">
+                <h3>Attività Manuale</h3>
+                <p>Genera crediti grezzi cliccando il terminale.</p>
+                <button id="big-clicker">DECRYPTA DATI</button>
+            </div>
+
+            <div id="generators-list">
+                <!-- Generatori inseriti via JS -->
+            </div>
+        </div>
+
+        <!-- Tab PRESTIGE -->
+        <div id="prestige" class="tab-content">
+            <div class="stat-box" id="prestige-section">
+                <div class="stat-label">Moltiplicatore Ascensione (Naniti Quantici)</div>
+                <div class="stat-value" id="prestige-mult">x1.00</div>
+                <div class="stat-label" style="margin-top: 10px;">Prossima Ascensione disponibile tra:</div>
+                <div class="stat-value" id="prestige-pending" style="font-size: 1.1rem; color: white;">0 NT</div>
+                <button id="prestige-btn" disabled>ATTIVA PROTOCOLLO DI ASCENSIONE</button>
+                <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Resetta progressi e crediti, ma aumenta permanentemente il guadagno base.</p>
+            </div>
+            
+            <div class="stat-box">
+                <div class="stat-label">Totale Ascensioni</div>
+                <div class="stat-value" id="total-ascensions">0</div>
+            </div>
+        </div>
+
+        <!-- Tab STATS -->
+        <div id="stats" class="tab-content">
+            <div class="stat-box">
+                <div class="stat-label">Clic Totali</div>
+                <div class="stat-value" id="total-clicks">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">Tempo di Gioco</div>
+                <div class="stat-value" id="play-time">0s</div>
+            </div>
+
+            <h3>Traguardi</h3>
+            <div id="achievements-list">
+                <!-- Achievements JS -->
+            </div>
+        </div>
+
+        <!-- Ad Boost Section (Always visible at bottom) -->
+        <div id="ad-boost-section">
+            <h4>🔄 Boost Guadagno x2</h4>
+            <p>Guarda un breve video per raddoppiare tutto per 5 minuti.</p>
+            <button id="watch-ad-btn">GUARDA VIDEO AD</button>
+        </div>
+    </main>
+
+
+    <script>
+        // --- GAME STATE ---
+        const gameData = {
+            credits: 0,
+            totalClicks: 0,
+            startTime: Date.now(),
+            secondsPlayed: 0,
+            lastUpdate: Date.now(),
+            
+            // Prestigio
+            prestigePoints: 0, // Naniti Quantici
+            prestigeMult: 1,
+            totalAscensions: 0,
+
+            // Impostazioni Acquisto (1x, 10x, 100x, Max)
+            buyAmount: 1, 
+
+            // Generatori
+            generators: [
+                { id: 'script', name: 'Python Script', level: 0, baseCost: 10, baseProd: 1, owned: 0 },
+                { id: 'bot', name: 'Mining Botnet', level: 0, baseCost: 100, baseProd: 8, owned: 0 },
+                { id: 'ai', name: 'AI Core', level: 0, baseCost: 1200, baseProd: 65, owned: 0 },
+                { id: 'server', name: 'Quantum Server Farm', level: 0, baseCost: 18000, baseProd: 550, owned: 0 },
+                { id: 'corp', name: 'Cyber Corporation', level: 0, baseCost: 300000, baseProd: 4000, owned: 0 },
+                { id: 'net', name: 'Darknet Hub', level: 0, baseCost: 5000000, baseProd: 35000, owned: 0 },
+                { id: 'gate', name: 'Reality Gateway', level: 0, baseCost: 100000000, baseProd: 300000, owned: 0 }
+            ],
+            
+            // Traguardi
+            achievements: [
+                { id: 'c1', name: 'Novizio Digitale', desc: 'Fai 100 Clic', check: (g) => g.totalClicks >= 100, unlocked: false },
+                { id: 'g1', name: 'Script Kiddie', desc: 'Ottieni 10 Python Script Livello 10', check: (g) => g.generators[0].level >= 10, unlocked: false },
+                { id: 'g2', name: 'Rete Potenziata', desc: 'Ottieni 10 Mining Botnet Livello 25', check: (g) => g.generators[1].level >= 25, unlocked: false },
+                { id: 'p1', name: 'Rinascita', desc: 'Esegui la prima Ascensione', check: (g) => g.totalAscensions >= 1, unlocked: false },
+                { id: 'rich1', name: 'Milionario', desc: 'Possiedi 1 Milione di Crediti', check: (g) => g.credits >= 1e6, unlocked: false },
+                { id: 'all50', name: 'Infrastruttura Solida', desc: 'Tutti gli impianti a livello 50', check: (g) => g.generators.every(gen => gen.level >= 50), unlocked: false }
+            ],
+
+            // Boost
+            adBoostActive: false,
+            adBoostEnds: 0 // timestamp
+        };
+
+        // --- UI references ---
+        const uiCounter = document.getElementById('main-counter');
+        const uiPerSecond = document.getElementById('per-second');
+        const genList = document.getElementById('generators-list');
+        const bigClicker = document.getElementById('big-clicker');
+        const achList = document.getElementById('achievements-list');
+        const uiPrestigeMult = document.getElementById('prestige-mult');
+        const uiPrestigePending = document.getElementById('prestige-pending');
+        const uiPrestigeBtn = document.getElementById('prestige-btn');
+        const uiTotalAscensions = document.getElementById('total-ascensions');
+        const uiTotalClicks = document.getElementById('total-clicks');
+        const uiPlayTime = document.getElementById('play-time');
+        const uiWatchAdBtn = document.getElementById('watch-ad-btn');
+
+        // Load Save
+        function loadGame() {
+            const saved = localStorage.getItem('cyberTycoonSave_v2');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                // Merging base object with saved data
+                Object.assign(gameData, parsed);
+                // Ensure startTime is correct, but secondsPlayed are loaded
+                gameData.startTime = Date.now() - (gameData.secondsPlayed * 1000); 
+            }
+            renderGenerators();
+            renderAchievements();
+            updatePrestigeUI();
+        }
+
+        // Save Game
+        function saveGame() {
+            localStorage.setItem('cyberTycoonSave_v2', JSON.stringify(gameData));
+        }
+
+        // Formattazione numeri
+        function formatNum(num) {
+            if (num === 0) return "0";
+            if (num < 1000) return Math.floor(num).toString();
+            const k = 1000;
+            const sizes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc"];
+            const i = Math.floor(Math.log(num) / Math.log(k));
+            return parseFloat((num / Math.pow(k, i)).toFixed(2)) + sizes[i];
+        }
+
+        // Calcolo costo (Esponenziale)
+        // Costo = BaseCost * (1.15 ^ Livello)
+        function getGeneratorCost(gen, amount) {
+            // Calcola il costo per comprare 'amount' livelli partendo dal livello attuale
+            // Formula: Costo = Base * ( (1 - r^n) / (1 - r) ) dove r=1.15, n=amount
+            // Approssimazione semplificata per singolo acquisto, corretta per Max.
+            let currentLevel = gen.level;
+            let totalCost = 0;
+            
+            // Semplificazione per singolo acquisto (buyAmount = 1)
+            if (amount === 1) {
+                return Math.floor(gen.baseCost * Math.pow(1.15, currentLevel));
+            }
+
+            // Calcolo iterativo per acquisti multipli (meno efficiente ma preciso)
+            // Per 'Max', il calcolo potrebbe bloccarsi su numeri giganti,
+            // limitiamo il calcolo di Max in base ai crediti attuali.
+            let numToBuy = amount;
+            if (amount === 'max') {
+                 numToBuy = 1;
+                 let tempLevel = currentLevel;
+                 let tempCredits = gameData.credits;
+                 // Stima spannometrica per non bloccare il browser
+                 // Il ciclo while calcola quanto può comprare.
+                 while (tempCredits > 0) {
+                    let cost = Math.floor(gen.baseCost * Math.pow(1.15, tempLevel));
+                    if (tempCredits >= cost) {
+                        tempCredits -= cost;
+                        totalCost += cost;
+                        tempLevel++;
+                        numToBuy++;
+                    } else { break; }
+                    if (numToBuy > 5000) break; // Limite di sicurezza
+                 }
+                 return totalCost;
+            }
+
+            for (let i = 0; i < numToBuy; i++) {
+                totalCost += Math.floor(gen.baseCost * Math.pow(1.15, currentLevel + i));
+            }
+            return totalCost;
+        }
+
+        // Calcolo Produzione (con Moltiplicatori Livello)
+        function getGeneratorProd(gen) {
+            // Base
+            let prod = gen.baseProd * gen.level;
+            
+            // Moltiplicatori ogni 25 livelli (x4)
+            if (gen.level >= 25) {
+                const mults25 = Math.floor(gen.level / 25);
+                prod *= Math.pow(4, mults25);
+            }
+            
+            return prod;
+        }
+
+        // Calcolo PPS Totale
+        function calculatePPS() {
+            let totalPPS = 0;
+            gameData.generators.forEach(gen => {
+                totalPPS += getGeneratorProd(gen);
+            });
+            
+            // Applica Moltiplicatore Prestigio e Boost AD
+            let finalPPS = totalPPS * gameData.prestigeMult;
+            if (gameData.adBoostActive) finalPPS *= 2;
+            
+            return finalPPS;
+        }
+
+        // Rendering Generatori
+        function renderGenerators() {
+            genList.innerHTML = '';
+            const currentPPS = calculatePPS();
+
+            gameData.generators.forEach((gen, index) => {
+                const cost = getGeneratorCost(gen, 1);
+                const prod = getGeneratorProd(gen);
+                const canAfford = gameData.credits >= cost;
+                
+                const div = document.createElement('div');
+                div.className = 'gen-item';
+                
+                const prodPerSec = (currentPPS > 0) ? (prod / currentPPS * 100) : 0;
+
+                div.innerHTML = `
+                    <div class="gen-info">
+                        <div class="gen-title">${gen.name} <span class="gen-mult">Lv ${gen.level}</span></div>
+                        <div class="gen-stats">
+                            Prod: ${formatNum(prod)}/s
+                            <br>Contributo: ${prodPerSec.toFixed(1)}%
+                        </div>
+                    </div>
+                    <div class="gen-btn-group">
+                        <button class="buy-btn ${canAfford ? 'can-afford' : ''}" 
+                                id="buy-${gen.id}"
+                                onclick="buyGenerator(${index})">
+                            COMPRA
+                            <br>Costo: ${formatNum(cost)}
+                        </button>
+                         <button class="buy-btn buy-btn-max" onclick="buyGenerator(${index}, true)">Compra Max</button>
+                    </div>
+                `;
+                genList.appendChild(div);
+            });
+        }
+
+        // Acquisto Generatore
+        function buyGenerator(index, buyMax = false) {
+            const gen = gameData.generators[index];
+            
+            // Modalità 1x (default)
+            let amountToBuy = 1;
+            if (buyMax) amountToBuy = 'max';
+
+            const cost = getGeneratorCost(gen, amountToBuy);
+
+            // Non permette acquisto se costo è 0 (caso limite max)
+            if (cost <= 0 || gameData.credits < cost) return;
+
+            // Gestione acquisto Max (aggiusta amountToBuy reale)
+            if (buyMax) {
+                // Calcolo quanto può comprare già fatto in getGeneratorCost
+                // Verifichiamo quanti livelli abbiamo comprato (semplice conteggio per achievement)
+                let tempCredits = gameData.credits;
+                let levelsBought = 0;
+                while(tempCredits >= Math.floor(gen.baseCost * Math.pow(1.15, gen.level + levelsBought))) {
+                    tempCredits -= Math.floor(gen.baseCost * Math.pow(1.15, gen.level + levelsBought));
+                    levelsBought++;
+                }
+                gameData.credits -= cost;
+                gen.level += levelsBought;
+            } else {
+                 gameData.credits -= cost;
+                 gen.level++;
+            }
+            
+            saveGame();
+            updateUI_Full();
+        }
+
+        // Click Manuale
+        bigClicker.addEventListener('click', (e) => {
+            const pps = calculatePPS();
+            // Clic vale 1 secondo di produzione (minimo 1)
+            const clickVal = Math.max(1, pps);
+            gameData.credits += clickVal;
+            gameData.totalClicks++;
+
+            // Effetto testo fluttuante
+            const clickText = document.createElement('div');
+            clickText.className = 'click-text';
+            clickText.innerText = '+' + formatNum(clickVal);
+            clickText.style.left = (e.pageX - 20 + Math.random() * 40) + 'px';
+            clickText.style.top = (e.pageY - 20) + 'px';
+            document.body.appendChild(clickText);
+            setTimeout(() => clickText.remove(), 1000);
+
+            updateUI_Credits();
+        });
+
+        // --- Prestige System ---
+        // Formula Pending NT: sqrt(Crediti Totali / 1e15) - forse troppo alta.
+        // Formula più semplice: sqrt(Totale Produced Credicts / 1e12)
+        // Usiamo una stima più semplice basata sul totale speso 
