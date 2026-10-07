@@ -342,16 +342,19 @@ function updateUI_Full() {
     uiTotalClicks.innerText = formatNum(gameData.totalClicks);
     uiPlayTime.innerText = Math.floor(gameData.secondsPlayed) + 's';
 }
-
-function openTab(tabName) {
+function openTab(tabName) 
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    
     document.getElementById(tabName).classList.add('active');
     
-    // Attiva il pulsante tab corrispondente in modo sicuro
+    // Attiva il pulsante corretto in base al nome della tab
     if (tabName === 'generators') document.querySelectorAll('.tab-btn')[0]?.classList.add('active');
-    if (tabName === 'prestige') document.querySelectorAll('.tab-btn')[1]?.classList.add('active');
-    if (tabName === 'stats') document.querySelectorAll('.tab-btn')[2]?.classList.add('active');
+    if (tabName === 'missions') document.querySelectorAll('.tab-btn')[1]?.classList.add('active');
+    if (tabName === 'prestige') document.querySelectorAll('.tab-btn')[2]?.classList.add('active');
+    if (tabName === 'stats') document.querySelectorAll('.tab-btn')[3]?.classList.add('active');
+    
+    if (tabName === 'missions') renderMissions();
 }
 
 // Loop principale di gioco (eseguito ogni 100ms)
