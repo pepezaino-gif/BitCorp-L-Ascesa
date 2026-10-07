@@ -14,34 +14,25 @@
             --border: #333;
             --success: #00e676;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; user-select: none; }
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-
         #ad-banner-top { width: 100%; height: 50px; background: #222; display: flex; align-items: center; justify-content: center; color: #888; border-bottom: 1px solid var(--border); font-size: 0.8rem; flex-shrink: 0;}
-        
         header { text-align: center; padding: 15px; background: var(--panel-bg); border-bottom: 2px solid var(--accent); flex-shrink: 0; }
         #main-counter { font-size: 2.5rem; font-weight: bold; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
         #per-second { font-size: 1rem; color: #888; margin-top: 5px; }
-
         .tab-controls { display: flex; background: #080810; border-bottom: 1px solid var(--border); flex-shrink: 0;}
         .tab-btn { flex: 1; padding: 12px; background: none; border: none; color: #888; font-size: 1rem; cursor: pointer; border-right: 1px solid var(--border); }
-        .tab-btn:last-child { border-right: none; }
         .tab-btn.active { background: var(--panel-bg); color: var(--accent); font-weight: bold; border-bottom: 2px solid var(--accent); }
-
         main { flex-grow: 1; overflow-y: auto; padding: 15px; }
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        #click-farm { background: var(--panel-bg); border: 1px solid var(--accent); border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 20px; position: relative; overflow: hidden;}
+        #click-farm { background: var(--panel-bg); border: 1px solid var(--accent); border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 20px; position: relative;}
         #click-farm h3 {color: var(--accent-2); text-transform: uppercase; letter-spacing: 2px; font-size: 1.1rem;}
-        #big-clicker { font-size: 1.3rem; padding: 15px 25px; background: linear-gradient(45deg, var(--accent-2), #cc0044); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; position: relative; z-index: 2; transition: transform 0.1s; box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4); width: 100%; max-width: 300px;}
+        #big-clicker { font-size: 1.3rem; padding: 15px 25px; background: linear-gradient(45deg, var(--accent-2), #cc0044); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 15px; width: 100%; max-width: 300px; box-shadow: 0 4px 15px rgba(255, 0, 85, 0.4);}
         #big-clicker:active { transform: scale(0.97); }
         .click-text { position: absolute; color: var(--accent); font-weight: bold; pointer-events: none; animation: floatUp 1s ease-out; z-index: 10; font-size: 1.2rem; }
         @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-50px); opacity: 0; } }
-
         .gen-item { background: var(--panel-bg); border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .gen-info { flex-grow: 1; }
         .gen-title { font-weight: bold; font-size: 1.1rem; color: white; }
@@ -52,39 +43,31 @@
         .buy-btn.can-afford {background: var(--accent); box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);}
         .buy-btn:not(.can-afford) {background: #222; color: #666;}
         .buy-btn-max { font-size: 0.7rem; padding: 4px 8px; background: #333; color: #ddd;}
-
         .stat-box { background: #080810; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;}
         .stat-label { color: #888; font-size: 0.9rem; }
         .stat-value { color: var(--accent); font-size: 1.5rem; font-weight: bold; margin-top: 5px; }
-        
         #prestige-section { border: 2px solid var(--accent-2); }
         #prestige-btn { width: 100%; padding: 15px; background: linear-gradient(to right, #4facfe 0%, #00f2fe 100%); color: black; border: none; border-radius: 5px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 10px;}
         #prestige-btn:disabled { background: #555; color: #999; cursor: not-allowed; }
-        
         .ach-item { background: #080810; border: 1px solid var(--border); padding: 10px; margin-bottom: 8px; border-radius: 4px; opacity: 0.5;}
         .ach-item.unlocked { border-color: var(--success); opacity: 1; background: rgba(0, 230, 118, 0.1);}
         .ach-title { font-weight: bold; color: white;}
         .ach-desc { font-size: 0.8rem; color: #aaa;}
-
         #ad-boost-section { background: #1a1a2e; border: 1px solid var(--accent); padding: 15px; text-align: center; margin-top: 20px; border-radius: 8px; }
         #watch-ad-btn { padding: 10px 20px; background: var(--accent-2); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 10px; }
     </style>
 </head>
 <body>
-
     <div id="ad-banner-top">[SPAZIO BANNER PUBBLICITARIO]</div>
-
     <header>
         <div id="main-counter">0</div>
         <div id="per-second">Crediti al secondo: 0</div>
     </header>
-
     <div class="tab-controls">
         <button class="tab-btn active" onclick="openTab('generators')">Impianti</button>
         <button class="tab-btn" onclick="openTab('prestige')">Ascensione</button>
         <button class="tab-btn" onclick="openTab('stats')">Info</button>
     </div>
-
     <main>
         <div id="generators" class="tab-content active">
             <div id="click-farm">
@@ -94,7 +77,6 @@
             </div>
             <div id="generators-list"></div>
         </div>
-
         <div id="prestige" class="tab-content">
             <div class="stat-box" id="prestige-section">
                 <div class="stat-label">Moltiplicatore Ascensione (Naniti Quantici)</div>
@@ -102,14 +84,12 @@
                 <div class="stat-label" style="margin-top: 10px;">Prossima Ascensione disponibile tra:</div>
                 <div class="stat-value" id="prestige-pending" style="font-size: 1.1rem; color: white;">0 NT</div>
                 <button id="prestige-btn" disabled>ATTIVA PROTOCOLLO DI ASCENSIONE</button>
-                <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">Resetta progressi e crediti per aumentare il guadagno base.</p>
             </div>
             <div class="stat-box">
                 <div class="stat-label">Totale Ascensioni</div>
                 <div class="stat-value" id="total-ascensions">0</div>
             </div>
         </div>
-
         <div id="stats" class="tab-content">
             <div class="stat-box">
                 <div class="stat-label">Clic Totali</div>
@@ -122,7 +102,6 @@
             <h3>Traguardi</h3>
             <div id="achievements-list"></div>
         </div>
-
         <div id="ad-boost-section">
             <h4>🔄 Boost Guadagno x2</h4>
             <p>Guarda un breve video per raddoppiare tutto per 5 minuti.</p>
@@ -130,330 +109,7 @@
         </div>
     </main>
 
-    <script>
-        const gameData = {
-            credits: 0,
-            totalClicks: 0,
-            startTime: Date.now(),
-            secondsPlayed: 0,
-            lastUpdate: Date.now(),
-            prestigePoints: 0,
-            prestigeMult: 1,
-            totalAscensions: 0,
-            generators: [
-                { id: 'script', name: 'Python Script', level: 0, baseCost: 10, baseProd: 1 },
-                { id: 'bot', name: 'Mining Botnet', level: 0, baseCost: 100, baseProd: 8 },
-                { id: 'ai', name: 'AI Core', level: 0, baseCost: 1200, baseProd: 65 },
-                { id: 'server', name: 'Quantum Server Farm', level: 0, baseCost: 18000, baseProd: 550 },
-                { id: 'corp', name: 'Cyber Corporation', level: 0, baseCost: 300000, baseProd: 4000 },
-                { id: 'net', name: 'Darknet Hub', level: 0, baseCost: 5000000, baseProd: 35000 },
-                { id: 'gate', name: 'Reality Gateway', level: 0, baseCost: 100000000, baseProd: 300000 }
-            ],
-            achievements: [
-                { id: 'c1', name: 'Novizio Digitale', desc: 'Fai 100 Clic', check: (g) => g.totalClicks >= 100, unlocked: false },
-                { id: 'g1', name: 'Script Kiddie', desc: 'Python Script Lv 10', check: (g) => g.generators[0].level >= 10, unlocked: false },
-                { id: 'p1', name: 'Rinascita', desc: 'Esegui la prima Ascensione', check: (g) => g.totalAscensions >= 1, unlocked: false },
-                { id: 'rich1', name: 'Milionario', desc: 'Possiedi 1 Milione di Crediti', check: (g) => g.credits >= 1e6, unlocked: false }
-            ],
-            adBoostActive: false,
-            adBoostEnds: 0
-        };
-
-        const uiCounter = document.getElementById('main-counter');
-        const uiPerSecond = document.getElementById('per-second');
-        const genList = document.getElementById('generators-list');
-        const bigClicker = document.getElementById('big-clicker');
-        const achList = document.getElementById('achievements-list');
-        const uiPrestigeMult = document.getElementById('prestige-mult');
-        const uiPrestigePending = document.getElementById('prestige-pending');
-        const uiPrestigeBtn = document.getElementById('prestige-btn');
-        const uiTotalAscensions = document.getElementById('total-ascensions');
-        const uiTotalClicks = document.getElementById('total-clicks');
-        const uiPlayTime = document.getElementById('play-time');
-        const uiWatchAdBtn = document.getElementById('watch-ad-btn');
-
-        function loadGame() {
-            const saved = localStorage.getItem('cyberTycoonSave_v2');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    Object.assign(gameData, parsed);
-                    gameData.startTime = Date.now() - (gameData.secondsPlayed * 1000);
-                } catch(e) { console.log("Errore caricamento"); }
-            }
-            updateUI_Full();
-        }
-
-        function saveGame() {
-            localStorage.setItem('cyberTycoonSave_v2', JSON.stringify(gameData));
-        }
-
-        function formatNum(num) {
-            if (num === 0) return "0";
-            if (num < 1000) return Math.floor(num).toString();
-            const k = 1000;
-            const sizes = ["", "K", "M", "B", "T", "Qa", "Qi", "Sx"];
-            const i = Math.floor(Math.log(num) / Math.log(k));
-            return parseFloat((num / Math.pow(k, i)).toFixed(2)) + sizes[i];
-        }
-
-        function getGeneratorCost(gen, amount = 1) {
-            if (amount === 1) {
-                return Math.floor(gen.baseCost * Math.pow(1.15, gen.level));
-            }
-            let totalCost = 0;
-            let currentLevel = gen.level;
-            let numToBuy = 1;
-            let tempCredits = gameData.credits;
-            while (tempCredits > 0) {
-                let cost = Math.floor(gen.baseCost * Math.pow(1.15, currentLevel));
-                if (tempCredits >= cost) {
-                    tempCredits -= cost;
-                    totalCost += cost;
-                    currentLevel++;
-                    numToBuy++;
-                } else { break; }
-                if (numToBuy > 500) break;
-            }
-            return totalCost;
-        }
-
-        function getGeneratorProd(gen) {
-            let prod = gen.baseProd * gen.level;
-            if (gen.level >= 25) {
-                const mults25 = Math.floor(gen.level / 25);
-                prod *= Math.pow(4, mults25);
-            }
-            return prod;
-        }
-
-        function calculatePPS() {
-            let totalPPS = 0;
-            gameData.generators.forEach(gen => {
-                totalPPS += getGeneratorProd(gen);
-            });
-            let finalPPS = totalPPS * gameData.prestigeMult;
-            if (gameData.adBoostActive) finalPPS *= 2;
-            return finalPPS;
-        }
-
-        function renderGenerators() {
-            genList.innerHTML = '';
-            const currentPPS = calculatePPS();
-
-            gameData.generators.forEach((gen, index) => {
-                const cost = getGeneratorCost(gen, 1);
-                const prod = getGeneratorProd(gen);
-                const canAfford = gameData.credits >= cost;
-                
-                const div = document.createElement('div');
-                div.className = 'gen-item';
-                
-                const prodPerSec = (currentPPS > 0) ? (prod / currentPPS * 100) : 0;
-
-                div.innerHTML = `
-                    <div class="gen-info">
-                        <div class="gen-title">${gen.name} <span class="gen-mult">Lv ${gen.level}</span></div>
-                        <div class="gen-stats">Prod: ${formatNum(prod)}/s (${prodPerSec.toFixed(0)}%)</div>
-                    </div>
-                    <div class="gen-btn-group">
-                        <button class="buy-btn ${canAfford ? 'can-afford' : ''}" onclick="buyGenerator(${index})">
-                            COMPRA<br>${formatNum(cost)}
-                        </button>
-                        <button class="buy-btn buy-btn-max" onclick="buyGeneratorMax(${index})">Max</button>
-                    </div>
-                `;
-                genList.appendChild(div);
-            });
-        }
-
-        function buyGenerator(index) {
-            const gen = gameData.generators[index];
-            const cost = getGeneratorCost(gen, 1);
-            if (gameData.credits >= cost) {
-                gameData.credits -= cost;
-                gen.level++;
-                saveGame();
-                updateUI_Full();
-            }
-        }
-
-        function buyGeneratorMax(index) {
-            const gen = gameData.generators[index];
-            let levelsBought = 0;
-            let totalCost = 0;
-            while(true) {
-                let cost = Math.floor(gen.baseCost * Math.pow(1.15, gen.level + levelsBought));
-                if (gameData.credits - totalCost >= cost) {
-                    totalCost += cost;
-                    levelsBought++;
-                } else {
-                    break;
-                }
-                if (levelsBought > 500) break;
-            }
-            if (levelsBought > 0) {
-                gameData.credits -= totalCost;
-                gen.level += levelsBought;
-                saveGame();
-                updateUI_Full();
-            }
-        }
-
-        bigClicker.addEventListener('click', (e) => {
-            const pps = calculatePPS();
-            // Clic vale almeno 1, oppure 1 secondo di produzione se superiore
-            const clickVal = Math.max(1, pps);
-            gameData.credits += clickVal;
-            gameData.totalClicks++;
-
-            const clickText = document.createElement('div');
-            clickText.className = 'click-text';
-            clickText.innerText = '+' + formatNum(clickVal);
-            clickText.style.left = (e.clientX - 20) + 'px';
-            clickText.style.top = (e.clientY - 20) + 'px';
-            document.body.appendChild(clickText);
-            setTimeout(() => clickText.remove(), 1000);
-
-            updateUI_Credits();
-            saveGame();
-        });
-
-        function calculatePendingPrestige() {
-            let totalLevel = 0;
-            gameData.generators.forEach(g => totalLevel += g.level);
-            if (totalLevel < 50) return 0;
-            return Math.floor(Math.sqrt(totalLevel * 500) / 10);
-        }
-
-        function updatePrestigeUI() {
-            const pending = calculatePendingPrestige();
-            uiPrestigePending.innerText = formatNum(pending) + ' NT';
-            uiPrestigeMult.innerText = 'x' + gameData.prestigeMult.toFixed(2);
-            uiTotalAscensions.innerText = gameData.totalAscensions;
-            uiPrestigeBtn.disabled = pending < 1;
-        }
-
-        uiPrestigeBtn.addEventListener('click', () => {
-            const pending = calculatePendingPrestige();
-            if (pending < 1) return;
-            if(!confirm("Resettare progressi per guadagnare Naniti Quantici?")) return;
-
-            gameData.credits = 0;
-            gameData.prestigePoints += pending;
-            gameData.prestigeMult = 1 + (gameData.prestigePoints * 0.1);
-            gameData.totalAscensions++;
-            gameData.generators.forEach(gen => gen.level = 0);
-
-            saveGame();
-            updateUI_Full();
-            openTab('generators');
-        });
-
-        function renderAchievements() {
-            achList.innerHTML = '';
-            gameData.achievements.forEach(ach => {
-                const div = document.createElement('div');
-                div.className = `ach-item ${ach.unlocked ? 'unlocked' : ''}`;
-                div.innerHTML = `<div class="ach-title">${ach.name} ${ach.unlocked ? '✅' : ''}</div><div class="ach-desc">${ach.desc}</div>`;
-                achList.appendChild(div);
-            });
-        }
-
-        function checkAchievements() {
-            let changed = false;
-            gameData.achievements.forEach(ach => {
-                if (!ach.unlocked && ach.check(gameData)) {
-                    ach.unlocked = true;
-                    changed = true;
-                }
-            });
-            if (changed) renderAchievements();
-        }
-
-        uiWatchAdBtn.addEventListener('click', () => {
-            if (confirm("Simulazione annuncio: Vuoi raddoppiare la produzione per 5 minuti?")) {
-                gameData.adBoostActive = true;
-                gameData.adBoostEnds = Date.now() + (5 * 60 * 1000);
-                uiWatchAdBtn.innerText = "BOOST ATTIVO";
-                uiWatchAdBtn.disabled = true;
-                
-                const timer = setInterval(() => {
-                    const rem = Math.floor((gameData.adBoostEnds - Date.now()) / 1000);
-                    if (rem <= 0) {
-                        gameData.adBoostActive = false;
-                        uiWatchAdBtn.innerText = "GUARDA VIDEO AD";
-                        uiWatchAdBtn.disabled = false;
-                        clearInterval(timer);
-                    } else {
-                        uiWatchAdBtn.innerText = `Boost: ${Math.floor(rem/60)}:${(rem%60 < 10 ? '0':'')}${rem%60}`;
-                    }
-                }, 1000);
-                updateUI_Full();
-            }
-        });
-
-        function updateUI_Credits() {
-            uiCounter.innerText = formatNum(gameData.credits);
-            uiPerSecond.innerText = 'Crediti al secondo: ' + formatNum(calculatePPS());
-            
-            gameData.generators.forEach((gen, i) => {
-                const cost = getGeneratorCost(gen, 1);
-                const btn = document.querySelectorAll('.buy-btn')[i * 2];
-                if (btn) {
-                    if (gameData.credits >= cost) btn.classList.add('can-afford');
-                    else btn.classList.remove('can-afford');
-                }
-            });
-        }
-
-        function updateUI_Full() {
-            updateUI_Credits();
-            renderGenerators();
-            renderAchievements();
-            updatePrestigeUI();
-                    }
-
-        function updateUI_Full() {
-            updateUI_Credits();
-            renderGenerators();
-            renderAchievements();
-            updatePrestigeUI();
-            uiTotalClicks.innerText = formatNum(gameData.totalClicks);
-            uiPlayTime.innerText = Math.floor(gameData.secondsPlayed) + 's';
-        }
-
-        function openTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            if (tabName === 'generators') document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            if (tabName === 'prestige') document.querySelectorAll('.tab-btn')[1].classList.add('active');
-            if (tabName === 'stats') document.querySelectorAll('.tab-btn')[2].classList.add('active');
-        }
-
-        setInterval(() => {
-            const now = Date.now();
-            const delta = (now - gameData.lastUpdate) / 1000;
-            gameData.secondsPlayed += delta;
-            gameData.lastUpdate = now;
-
-            const pps = calculatePPS();
-            if (pps > 0) {
-                gameData.credits += pps * delta;
-            }
-
-            updateUI_Credits();
-            checkAchievements();
-
-            if (Math.floor(gameData.secondsPlayed) % 10 === 0) {
-                saveGame();
-            }
-        }, 100);
-
-        loadGame();
-    </script>
+    <!-- Collega lo script esterno -->
+    <script src="game.js"></script>
 </body>
 </html>
-
-                
