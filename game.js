@@ -113,7 +113,6 @@ function renderGenerators() {
     genList.innerHTML = '';
     const currentPPS = calculatePPS();
 
-    // Aggiungiamo un box per potenziare il click manuale dentro la lista impianti
     const clickUpgradeCost = Math.floor(50 * Math.pow(1.5, gameData.clickPowerLevel - 1));
     const clickDiv = document.createElement('div');
     clickDiv.className = 'gen-item';
@@ -217,12 +216,14 @@ bigClicker.addEventListener('click', (e) => {
     saveGame();
 });
 
-// CALCOLO ASCENSIONE CORRETTO E ACCESSIBILE
 function calculatePendingPrestige() {
     let totalLevel = 0;
     gameData.generators.forEach(g => totalLevel += g.level);
-    if (totalLevel < 15) return 0; // Abbassato a 15 livelli totali per renderla sbloccabile prima
-    return Math.floor(Math.sqrt((totalLevel - 10) * 200));
+    if (totalLevel < 10) return 0;
+    let fromLevels = Math.floor((totalLevel - 9) * 0.5);
+    let fromCredits = Math.floor(gameData.credits / 10000);
+    let totalPending = fromLevels + fromCredits;
+    return totalPending > 0 ? totalPending : 0;
 }
 
 function updatePrestigeUI() {
@@ -230,7 +231,18 @@ function updatePrestigeUI() {
     uiPrestigePending.innerText = formatNum(pending) + ' NT';
     uiPrestigeMult.innerText = 'x' + gameData.prestigeMult.toFixed(2);
     uiTotalAscensions.innerText = gameData.totalAscensions;
-    uiPrestigeBtn.disabled = pending < 1;
+    
+    if (pending >= 1) {
+        uiPrestigeBtn.disabled = false;
+        uiPrestigeBtn.style.background = "linear-gradient(to right, #4facfe 0%, #00f2fe 100%)";
+        uiPrestigeBtn.style.color = "black";
+        uiPrestigeBtn.style.cursor = "pointer";
+    } else {
+        uiPrestigeBtn.disabled = true;
+        uiPrestigeBtn.style.background = "#555";
+        uiPrestigeBtn.style.color = "#999";
+        uiPrestigeBtn.style.cursor = "not-allowed";
+    }
 }
 
 uiPrestigeBtn.addEventListener('click', () => {
@@ -240,7 +252,7 @@ uiPrestigeBtn.addEventListener('click', () => {
 
     gameData.credits = 0;
     gameData.prestigePoints += pending;
-    gameData.prestigeMult = 1 + (gameData.prestigePoints * 0.15); // +15% per ogni punto nanite
+    gameData.prestigeMult = 1 + (gameData.prestigePoints * 0.15);
     gameData.totalAscensions++;
     gameData.clickPowerLevel = 1;
     gameData.generators.forEach(gen => gen.level = 0);
@@ -299,7 +311,7 @@ function updateUI_Credits() {
     
     gameData.generators.forEach((gen, i) => {
         const cost = getGeneratorCost(gen, 1);
-        const btn = document.querySelectorAll('.buy-btn')[i * 2 + 1]; // +1 per saltare il tasto click upgrade
+        const btn = document.querySelectorAll('.buy-btn')[i * 2 + 1];
         if (btn) {
             if (gameData.credits >= cost) btn.classList.add('can-afford');
             else btn.classList.remove('can-afford');
@@ -325,7 +337,6 @@ function openTab(tabName) {
     if (tabName === 'stats') document.querySelectorAll('.tab-btn')[2].classList.add('active');
 }
 
-// Ciclo di gioco principale (ogni 100ms)
 setInterval(() => {
     const now = Date.now();
     const delta = (now - gameData.lastUpdate) / 1000;
@@ -346,4 +357,3 @@ setInterval(() => {
 }, 100);
 
 loadGame();
-    
